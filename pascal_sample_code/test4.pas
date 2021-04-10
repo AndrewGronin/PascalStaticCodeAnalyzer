@@ -1,0 +1,3 @@
+program abc;
+begin
+end.
