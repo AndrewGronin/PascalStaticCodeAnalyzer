@@ -2,9 +2,9 @@ program abc;
 var a,b,c:Integer;
 d,c,p:Boolean;
 
-const a = true;
+const
+a = true;
 b = 10;
-
 begin
     for i:= 1 to 20 do
         begin
@@ -14,6 +14,17 @@ begin
     read(a,b,c);
     a := b;
     begin
+        begin
+            begin
+                begin
+                    begin
+                        begin
+
+                        end;
+                    end;
+                end;
+            end;
+        end;
     end;
 
     write(a);

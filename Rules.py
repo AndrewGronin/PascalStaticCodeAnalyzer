@@ -141,6 +141,8 @@ class Rules():
 
                 self.is_variable_declaration()
                 token = self.tokenizer.read_next()
+                if token in ["const","begin"]:
+                    raise Exception("; Expected, or whatnot")
 
 
     def is_const_declaration_part(self):
@@ -172,6 +174,8 @@ class Rules():
                     self.tokenizer.get_next()
                     self.is_constant()
                 token = self.tokenizer.read_next()
+                if token in ["const","begin"]:
+                    raise Exception("; Expected, or whatnot")
 
 
 

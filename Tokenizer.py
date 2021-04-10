@@ -7,11 +7,6 @@ NO_NAME_SYMS = SYMS1 + SPACES + ['{','}']
 CHARS_ID0 = '&abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 CHARS_ID = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_'
 
-def is_comment(s):
-    if type(s) is list:
-        return True
-    else:
-        return s.startswith('{') or s.startswith('(*') or s.startswith('//')
 
 def is_name(s):
     if len(s)<=0:
@@ -25,8 +20,7 @@ def is_name(s):
             return False
     return True
 
-def is_string(s):
-    return s.startswith("'")
+
 
 class PasTokenizer():
     def __init__(self, s):
@@ -164,74 +158,3 @@ class PasTokenizer():
     def is_ended(self):
         return self.ended
 
-class PasTokenizerStack():
-    def __init__(self, s, comments=True):
-        self.main = PasTokenizer(s)
-        self.stack = []
-        if comments:
-            self._pop = self._get_with_comments
-        else:
-            self._pop = self._get_without_comments
-
-    def _get_with_comments(self):
-        return self.main.get_next()
-
-    def _get_without_comments(self):
-        while True:
-            s = self.main.get_next()
-            if not is_comment(s[0]):
-                return s
-            if s[3]:
-                return ('',(0,0),(0,0),True)
-
-    def push(self, s):
-        self.stack.append(s)
-
-    def pop(self):
-        if self.stack:
-            return self.stack.pop()
-        else:
-            return self._pop()
-
-    def read_last(self):
-        if not self.stack:
-            self.stack.append(self._pop())
-        return self.stack[-1]
-
-    def is_ended(self):
-        return self.stack and self.main.is_ended()
-
-class PasTokenizerParallelStack(PasTokenizerStack):
-    def __init__(self, s, comments = True, qlong = 1000):
-        super(PasTokenizerParallelStack,self).__init__(s, comments)
-        self.queue = queue.Queue(qlong)
-        th = threading.Thread(target = self._work, args = (self,))
-        th.start()
-
-    def _get_with_comments(self):
-        s = self.queue.get()
-        return s
-
-    def _get_without_comments(self):
-        while True:
-            s = self.queue.get()
-            if not is_comment(s[0]):
-                return s
-            if s[3]:
-                return ('',(0,0),(0,0),True)
-
-    def _work(self,s):
-        while not self.main.is_ended():
-            self.queue.put(self.main.get_next())
-        self.queue.put(('',(0,0),(0,0),True))
-
-    def is_ended(self):
-        return self.stack and self.main.is_ended()and self.queue.empty()
-
-    def stop(self):
-        self.main.ended = True
-        try:
-            while not self.queue.get_nowait()[3]:
-                pass
-        except:
-            pass

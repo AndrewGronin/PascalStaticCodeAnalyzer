@@ -1,6 +1,5 @@
 program abc;
-var a,b,c:Integer;
-d,c,p:Boolean;
+
 
 const a = true;
 b = 10;
@@ -20,4 +19,4 @@ begin
 
     if a>-10+b*11 then
         read(a,b,c);
-end....
+end.

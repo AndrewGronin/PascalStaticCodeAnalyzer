@@ -18,6 +18,8 @@ begin
 
     write(a);
 
+    a:=true>false;
+
     if a>-10+b*11 then
         read(a,b,c);
-end....
+end.
